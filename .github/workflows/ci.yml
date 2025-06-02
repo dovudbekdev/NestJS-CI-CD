@@ -21,7 +21,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: node_modules'ni yuklab olish
-              run: npm ci
+              run: npm install
 
             - name: Test buyru'gini ishga tushurish
               run: npm run test
