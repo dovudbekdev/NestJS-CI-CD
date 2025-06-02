@@ -1,0 +1,15 @@
+name: CI pipeline
+
+on:
+    push:
+        branches: [main]
+
+jobs: 
+    Test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Repositoryialarni yuklash
+              uses: actions/checkout@v4
+              
+            - name: node_modules'ni yuklab olish
+              run: npm install
