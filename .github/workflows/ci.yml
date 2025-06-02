@@ -13,3 +13,20 @@ jobs:
               
             - name: node_modules'ni yuklab olish
               run: npm install
+
+    Test-and-build:
+        runs-on: windows-latest
+        steps:
+            - name: Repositoryialarni yuklash
+              uses: actions/checkout@v4
+
+            - name: node_modules'ni yuklab olish
+              run: npm install
+
+            - name: Test buyru'gini ishga tushurish
+              run: npm run test
+            
+            - name: Build qilish
+              run: npm run build
+
+
