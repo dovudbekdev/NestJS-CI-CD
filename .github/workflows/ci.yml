@@ -83,7 +83,9 @@ jobs:
                 ssh root@185.191.141.96 "
                 cd Loyiha
                 cd NestJS-CI-CD
-                git pull origin main"
+                git pull origin main
+                npm install
+                npm run build"
 
             - name: Serverni qayta ishga tushirish
               run: |
