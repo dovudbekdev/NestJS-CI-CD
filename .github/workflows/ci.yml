@@ -5,28 +5,87 @@ on:
         branches: [main]
 
 jobs: 
-    # Test:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Repositoryialarni yuklash
-    #           uses: actions/checkout@v4
-              
-    #         - name: node_modules'ni yuklab olish
-    #           run: npm install
-
-    Test-and-build:
-        runs-on: windows-latest
+    Deploy: 
+        runs-on: ubuntu-latest
         steps:
-            - name: Repositoryialarni yuklash
+            - name: Repositoryani yuklash
               uses: actions/checkout@v4
-
-            - name: node_modules'ni yuklab olish
-              run: npm install
-
-            - name: Test buyru'gini ishga tushurish
-              run: npm run test
             
-            - name: Build qilish
-              run: npm run build
+            - name: ssh-key ni sozlash
+              run: |
+                mkdir -p ~/.ssh
+                echo "-----BEGIN OPENSSH PRIVATE KEY-----
+                b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
+                NhAAAAAwEAAQAAAgEAxj8RZEwcBLMntmpeYlJM/Geo8OFgCWVn2wu38ixj+1Kq3EwgXFzo
+                6DqebOgT0ikZPIJz4yLjZ5upSuiGc5i9L/Akx2ToYFgRkYrULN1TGyk3+gSjaI/MimSTH/
+                vZbP05kV/HEEMe0fyWSWdM5CWtNV2x/S4d9o4+L8TdwmBrXdIrCCgCtNFtjWCQprSPzLbJ
+                5PA7RVrqv90ud34fkA42At7CKek8VVzlH7o06UpxqY4rzVls+grakSJTal1TrMIT4UbsOu
+                QuyZ057jxJdQ5tOHPjspHG3fCkrfxNsr2y52MmEWKHV4IgGsmtil0f9+Tp0BUqlh+iaoFn
+                v4CgXhDArP1StdmS5PSi7igTpqTHa7hh82B9575TR/toXTzChyIF0ogVLWQSs+mlywgQQL
+                rT7dYXAH9CWQQvosp/LrQbL0zUPV9jncgI9rqVdIkwicWLiQxYu+K/yGAZOhRscJ3A8+Qn
+                DpbiyCNBx6DB8eltglKFtWk0KKwXZhj505ISGheLAJUDJv1M1xqUs5JrI8Iwn2TnOJdyeX
+                9OE1F+xDYyabbsrGHfEzqkKqwlZfbK0Nq9f02aYgNiHulg8sQC2sHVtrR76cipsWb6irjS
+                P8UFr8VeOUGfOVGGagPuF8086UXR8hIF+QnDI3YPERGlF2riFhYOKmux0DIsJAJvLBn5mj
+                kAAAdQrkm7yq5Ju8oAAAAHc3NoLXJzYQAAAgEAxj8RZEwcBLMntmpeYlJM/Geo8OFgCWVn
+                2wu38ixj+1Kq3EwgXFzo6DqebOgT0ikZPIJz4yLjZ5upSuiGc5i9L/Akx2ToYFgRkYrULN
+                1TGyk3+gSjaI/MimSTH/vZbP05kV/HEEMe0fyWSWdM5CWtNV2x/S4d9o4+L8TdwmBrXdIr
+                CCgCtNFtjWCQprSPzLbJ5PA7RVrqv90ud34fkA42At7CKek8VVzlH7o06UpxqY4rzVls+g
+                rakSJTal1TrMIT4UbsOuQuyZ057jxJdQ5tOHPjspHG3fCkrfxNsr2y52MmEWKHV4IgGsmt
+                il0f9+Tp0BUqlh+iaoFnv4CgXhDArP1StdmS5PSi7igTpqTHa7hh82B9575TR/toXTzChy
+                IF0ogVLWQSs+mlywgQQLrT7dYXAH9CWQQvosp/LrQbL0zUPV9jncgI9rqVdIkwicWLiQxY
+                u+K/yGAZOhRscJ3A8+QnDpbiyCNBx6DB8eltglKFtWk0KKwXZhj505ISGheLAJUDJv1M1x
+                qUs5JrI8Iwn2TnOJdyeX9OE1F+xDYyabbsrGHfEzqkKqwlZfbK0Nq9f02aYgNiHulg8sQC
+                2sHVtrR76cipsWb6irjSP8UFr8VeOUGfOVGGagPuF8086UXR8hIF+QnDI3YPERGlF2riFh
+                YOKmux0DIsJAJvLBn5mjkAAAADAQABAAACAAZCZwTs70SJuJMGpEDD+vjMOBYU86CQUllk
+                8xOjKav9hfYLNEleSJ9OfIKRSFDuKcUSlGCjUR1MGaoLEfWz6KNLGIowKjMijLl08fKRsW
+                ZN5J3RCCzMv4dOGiQcIlcR3r+zj7g4elBkgoVCTPf2JZQmB3DoRBttDdMZyuuweitd76xk
+                AQPfCe+5ERAmatTqn5DKMgDkWD2jGOy+b3YvsK5iBKzol5ZVZsmb6kBEcLbLDaB/9pQlhB
+                WpiQs2c6YkgZavE9XfLwgAHhxizGn1AOdTp2iTuDz5NGXm7bgbS7sJEyJg40eUzPkzjXZt
+                Ls13rZc7l9riGFF3EQTHpaiarE6rqVs9zscm7a9fz9qYAk/BhVWwnlr+UuYDAh0ZhX8nMN
+                Y6aLIff1+LT1X48QsNLgKQQqz1qLlTLpPEsLJVk23WmME1CEI0n4vWUYxYWs0Wp6xes8OZ
+                PoOTubBuhQzABewUzsq+GK3MRECZcNP9fH/STrQ+2iKOUvElAIkqtjA+J0P/j9jLtmbWE6
+                j07ARmu7WpdQ4MB7LXQFQycZtW3wM1pH7Cwt61WsjU2SuT46O4tLfUIVCz9lilzyktUEGO
+                o4+aPdYStkwoYWdsPpwRRi3Na7RDvBvwefHTjxRjXCouur9yrQvxOhmBOvR/iA3cq1FigO
+                YeEHVwPIYnWxD8JP8lAAABAQD3Y5fJPGLCOH6mY9bVPtmwGr5DCbdsiBAvmwIcuO81a716
+                TM9QNK/g+fre+Ogb4ZjjGvzqydbYH/yc9saSOBC3ZDDfO4JsfTs+vvLzg1CFONfSkXHP0Z
+                uAoAkGuUjF7c2URk7KMd3tZKTjGb1pmGNvV21sKhpItqRnjQqo99rSMIazGnS2zlRZUrHo
+                8dcZNsIHZXyHGC82eYXMGCdO0z8pWnCYeYUk7qOu8XGjfGwOdHmLEUwsVZ9H05GpNUKMJ7
+                3DU49u9PNaHIk5FH5M8dnkj3CTcjh2pi1MuKUezlYltkgSQPCRb6d3wdOOOXCuRe79KqwN
+                Ky5+tLfIxx/DRMInAAABAQD6nh0Zf3lYlQQq6NppXB8iTi2BYY4Mx9/DDWEiOsi2i43+MN
+                CtV/laYIp+Wln3vTqV+lSiLoUvqxy382s4N5kBtnci3r/sid6lekh15tQhAC6ee/KFiwlJ
+                Tbs54nlZEbdaWMCuADOzUZyK3T1Vved8oQq4MdKC729mCHJAOh1P5JfrwLvvuwU8IULVr+
+                Y2htmahXQEYAkOxBtiNpcwOFnau64mzQxCYbBxl9L9wAqaZhV0cJFc9pf4cRQ0mYj0RZ3c
+                yt7zupJ3ke+aXcNqdjVurRh0nycl45iSj7In1W3iZwKgsz6fg4eiI/E9gRWp1xAoDY5hud
+                gvYptuQX1Hqt3NAAABAQDKgQTbqYYu3SnLxrEnuqFiMq0Kj3xH72Pmz5L1fwf6F8TFaLQo
+                RUFDmhYpZT0+PZwc6oIRYwIE10vMxjdvLO44u6E1sBtj1OVv9YLf1bObW2EQOToxPexusX
+                7jwhGcYMmTz8hfKue0gHAoPkjXywghwlQ077qH3Hg8pdSXuvtIr2PzSrmLLdnZ7438auiV
+                VIuHy7MO4bYBW9wQlf1FhgGNPCuiQ7vodK7qWozfWBVbKhkcemfrudtbulU1E2ogUIIGnl
+                poBJIfvj3xM6aWGXFrMnNbqSttzsMHioIrkWqjS31K+MWT18gzfoj1UjJ4ffrZJupq8+qv
+                7tEPfxO3jmIdAAAAFmRvdnVkYmVrLmRldkBnbWFpbC5jb20BAgME
+                -----END OPENSSH PRIVATE KEY-----" > ~/.ssh/id_rsa
+                chmod 700 ~/.ssh
+                touch ~/.ssh/known_hosts
+                ssh-keyscan -H 185.191.141.96 > ~/.ssh/known_hosts
+              shell: bash
+
+            - name: Serverga ulanish
+              run: ssh root@185.191.141.96
+
+            - name: Serverga loyihadagi o'zgarishlarni qo'shish
+              run: |
+                ssh root@185.191.141.96 "
+                cd Loyiha
+                cd NestJS-CI-CD
+                git pull origin main"
+
+            - name: Serverni qayta ishga tushirish
+              run: |
+                ssh root@185.191.141.96 "
+                cd Loyiha/NestJS-CI-CD
+                pm2 restart CI-CD"
+              shell: bash
+
+        
+    
 
 
